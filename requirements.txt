@@ -1,6 +1,27 @@
 Flask==3.0.0
 flask-cors==4.0.0
-scikit-learn==1.8.0
+scikit-learn==1.5.2
 nltk==3.8.1
-numpy==1.26.2
 gunicorn==21.2.0
+```
+
+**Remove:**
+- `pandas` (not needed in production)
+- `numpy` (comes with scikit-learn)
+- `matplotlib` (not needed in production)
+- `seaborn` (not needed in production)
+
+---
+
+## Solution 3: Use .slugignore (Exclude Unnecessary Files)
+
+Create `backend/.slugignore`:
+```
+*.pyc
+__pycache__/
+*.ipynb
+.git/
+.vscode/
+*.md
+test*.py
+debug*.py
