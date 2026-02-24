@@ -5,11 +5,12 @@ from nltk.corpus import stopwords
 import nltk
 import os
 
-# Page config
+# Page config - Set to wide for a more dashboard-like feel
 st.set_page_config(
     page_title="Sentiment Analyzer",
-    page_icon="🎭",
-    layout="centered"
+    page_icon="✨",
+    layout="centered",
+    initial_sidebar_state="expanded"
 )
 
 # Download stopwords
@@ -18,7 +19,7 @@ def download_nltk_data():
     try:
         stopwords.words('english')
     except:
-        nltk.download('stopwords')
+        nltk.download('stopwords', quiet=True)
 
 download_nltk_data()
 
@@ -85,65 +86,160 @@ def apply_sentiment_rules(text, prediction, probability):
     
     return prediction, probability
 
-# Custom CSS
+# ==========================================
+# CUSTOM CSS (The "Sexy" UI Magic)
+# ==========================================
 st.markdown("""
 <style>
-    .main-header {
+    /* Gradient Text for Main Title */
+    .gradient-text {
+        background: linear-gradient(45deg, #FF3CAC 0%, #784BA0 50%, #2B86C5 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 3.5rem;
+        font-weight: 800;
         text-align: center;
-        padding: 2rem 0;
+        margin-bottom: 0px;
+        padding-bottom: 10px;
     }
+    
+    /* Subtitle Styling */
+    .subtitle {
+        text-align: center;
+        color: #888;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Glassmorphism Cards for Results */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        margin-top: 20px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    /* Sentiment specific text */
     .sentiment-positive {
-        color: #4CAF50;
-        font-size: 2rem;
-        font-weight: bold;
+        color: #00C853;
+        font-size: 2.5rem;
+        font-weight: 900;
+        text-align: center;
+        text-shadow: 0px 4px 15px rgba(0, 200, 83, 0.3);
     }
     .sentiment-negative {
-        color: #f44336;
-        font-size: 2rem;
-        font-weight: bold;
+        color: #FF3D00;
+        font-size: 2.5rem;
+        font-weight: 900;
+        text-align: center;
+        text-shadow: 0px 4px 15px rgba(255, 61, 0, 0.3);
     }
+
+    /* Primary Button Styling */
     .stButton>button {
         width: 100%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-size: 200% auto;
+        background-image: linear-gradient(to right, #667eea 0%, #764ba2 51%, #667eea 100%);
         color: white;
-        font-weight: 600;
-        padding: 0.75rem;
-        border-radius: 10px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        padding: 0.6rem 1rem;
+        border-radius: 12px;
         border: none;
+        transition: 0.5s;
+        box-shadow: 0 4px 15px 0 rgba(118, 75, 162, 0.4);
+    }
+    .stButton>button:hover {
+        background-position: right center; /* trigger gradient animation */
+        color: #fff;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+    
+    /* Secondary Buttons (Examples) */
+    div[data-testid="column"] .stButton>button {
+        background: rgba(100, 100, 100, 0.1);
+        color: inherit;
+        box-shadow: none;
+        border: 1px solid rgba(150, 150, 150, 0.2);
+    }
+    div[data-testid="column"] .stButton>button:hover {
+        border-color: #764ba2;
+        background: rgba(118, 75, 162, 0.1);
+        transform: translateY(-1px);
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Header
-st.markdown("<div class='main-header'>", unsafe_allow_html=True)
-st.title("🎭 Sentiment Analyzer")
-st.write("AI-powered sentiment analysis using NLP")
-st.caption("Trained on 150,000 reviews (IMDB + Twitter + Amazon) • 80% accuracy")
-st.markdown("</div>", unsafe_allow_html=True)
+# ==========================================
+# SIDEBAR
+# ==========================================
+with st.sidebar:
+    st.image("https://cdn-icons-png.flaticon.com/512/2040/2040946.png", width=80)
+    st.markdown("### About This App")
+    st.write("This AI-powered tool analyzes text to determine if the underlying sentiment is positive or negative.")
+    
+    st.markdown("---")
+    st.markdown("### 🧠 Under the Hood")
+    st.markdown("""
+    * **Model:** Logistic Regression
+    * **Features:** TF-IDF (2000 words)
+    * **Accuracy:** 82.40%
+    * **Training Data:** 150k combined reviews (IMDB, Twitter, Amazon)
+    """)
+    st.markdown("---")
+    st.caption("Built with ❤️ using Python & Streamlit")
+
+# ==========================================
+# MAIN INTERFACE
+# ==========================================
+st.markdown("<h1 class='gradient-text'>Sentiment Analyzer</h1>", unsafe_allow_html=True)
+st.markdown("<p class='subtitle'>Decode the emotion behind your text in real-time ✨</p>", unsafe_allow_html=True)
 
 if not models_loaded:
     st.error(f"⚠️ Failed to load models: {error_msg}")
     st.stop()
 
-# Input
+# Example state management (Cleaner implementation)
+if 'text_to_analyze' not in st.session_state:
+    st.session_state.text_to_analyze = ""
+
+def set_example(text):
+    st.session_state.text_to_analyze = text
+
+# Examples Row (Placed above the text box for better UX)
+st.markdown("##### 💡 Need inspiration? Try an example:")
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.button("😊 Positive", on_click=set_example, args=("This product exceeded all my expectations. Absolutely brilliant design and superb quality!",))
+with col2:
+    st.button("😞 Negative", on_click=set_example, args=("Honestly the worst experience I've had. Complete waste of time and money. Do not recommend.",))
+with col3:
+    st.button("🤔 Mixed", on_click=set_example, args=("The visuals were absolutely stunning, but the plot dragged on and became really boring halfway through.",))
+
+# Input Section
 text_input = st.text_area(
-    "Enter your text:",
+    label="Your Text",
+    value=st.session_state.text_to_analyze,
     height=150,
     placeholder="Type a movie review, tweet, product review, or any opinion...",
-    key="text_input"
+    label_visibility="collapsed"
 )
 
-# Analyze button
-if st.button("🔍 Analyze Sentiment", type="primary"):
+# Analyze Button
+if st.button("🚀 Analyze Sentiment", type="primary"):
     if text_input.strip():
-        with st.spinner("Analyzing..."):
-            # Clean and predict
+        with st.spinner("Decoding emotions..."):
+            
+            # Backend logic
             cleaned = clean_text(text_input)
             vectorized = vectorizer.transform([cleaned])
             prediction = model.predict(vectorized)[0]
             probability = model.predict_proba(vectorized)[0].copy()
-            
-            # Apply rules
             prediction, probability = apply_sentiment_rules(text_input, prediction, probability)
             
             sentiment = "Positive" if prediction == 1 else "Negative"
@@ -151,63 +247,37 @@ if st.button("🔍 Analyze Sentiment", type="primary"):
             pos_score = probability[1] * 100
             neg_score = probability[0] * 100
             
-            # Display results
-            st.markdown("---")
+            # ==========================================
+            # RESULTS DASHBOARD
+            # ==========================================
+            st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
             
-            # Sentiment badge
+            # Main Verdict
             if sentiment == "Positive":
-                st.markdown(f"<div class='sentiment-positive'>😊 {sentiment}</div>", 
-                          unsafe_allow_html=True)
+                st.markdown(f"<div class='sentiment-positive'>Sparkling {sentiment}! ✨</div>", unsafe_allow_html=True)
             else:
-                st.markdown(f"<div class='sentiment-negative'>😞 {sentiment}</div>", 
-                          unsafe_allow_html=True)
+                st.markdown(f"<div class='sentiment-negative'>Oof, {sentiment}. 🌧️</div>", unsafe_allow_html=True)
             
-            # Confidence
-            col1, col2 = st.columns(2)
-            with col1:
-                st.metric("Confidence", f"{confidence:.2f}%")
-            with col2:
-                st.metric("Cleaned Text Length", f"{len(cleaned.split())} words")
+            st.markdown("<hr style='opacity: 0.2;'>", unsafe_allow_html=True)
             
-            # Scores
-            st.markdown("### 📊 Sentiment Breakdown")
-            st.progress(pos_score / 100, text=f"😊 Positive: {pos_score:.2f}%")
-            st.progress(neg_score / 100, text=f"😞 Negative: {neg_score:.2f}%")
+            # Metrics Row
+            m1, m2 = st.columns(2)
+            with m1:
+                st.metric("AI Confidence Score", f"{confidence:.1f}%")
+            with m2:
+                st.metric("Words Processed", f"{len(cleaned.split())}")
+
+            # Visual Progress Bars
+            st.markdown("<br><b>Detailed Sentiment Breakdown:</b>", unsafe_allow_html=True)
+            st.progress(pos_score / 100, text=f"🟢 Positive Energy: {pos_score:.1f}%")
+            st.progress(neg_score / 100, text=f"🔴 Negative Energy: {neg_score:.1f}%")
             
-            # Show cleaned text
-            with st.expander("🔍 View Processed Text"):
-                st.code(cleaned, language=None)
+            st.markdown("</div>", unsafe_allow_html=True)
+
+            # Expandable technical details
+            with st.expander("🔍 View Pre-processed Text (What the AI sees)"):
+                st.code(cleaned, language="text")
+                st.caption("Note: Punctuation, capitalization, and common 'stop words' are removed before analysis.")
+                
     else:
-        st.warning("⚠️ Please enter some text to analyze!")
-
-# Examples
-st.markdown("---")
-st.markdown("### 💡 Try These Examples")
-
-example_col1, example_col2, example_col3 = st.columns(3)
-
-with example_col1:
-    if st.button("😊 Positive Example"):
-        st.session_state.example = "This movie was absolutely brilliant! The acting was superb."
-
-with example_col2:
-    if st.button("😞 Negative Example"):
-        st.session_state.example = "Worst product I've ever bought. Complete waste of money."
-
-with example_col3:
-    if st.button("🤔 Mixed Example"):
-        st.session_state.example = "The visuals were stunning but the plot was boring."
-
-if 'example' in st.session_state:
-    st.info(f"**Example loaded:** {st.session_state.example}")
-    st.rerun()
-
-# Footer
-st.markdown("---")
-st.markdown("""
-<div style='text-align: center; color: #666; padding: 1rem;'>
-    <p><strong>Built with:</strong> Python • Scikit-learn • NLTK • Streamlit</p>
-    <p><strong>Model:</strong> Logistic Regression with TF-IDF (2000 features)</p>
-    <p><strong>Dataset:</strong> 150k reviews (IMDB + Twitter + Amazon)</p>
-</div>
-""", unsafe_allow_html=True)
+        st.warning("⚠️ Don't leave me hanging! Type some text to analyze.")

@@ -1,77 +1,107 @@
-# Sentiment Analysis API - Backend
+# Sentiment Analysis - Streamlit Application
 
-Flask REST API for sentiment analysis using machine learning.
+Interactive web interface for real-time sentiment analysis using Linear SVM and TF-IDF.
+
+## 🎯 Model Performance
+
+- **Algorithm**: Linear SVM (Support Vector Machine)
+- **Accuracy**: 81.90%
+- **Precision**: 82% avg
+- **Recall**: 82% avg
+- **F1-Score**: 0.82
+- **Training Data**: 149,472 reviews (IMDB + Twitter + Amazon)
+- **Features**: 3,500 TF-IDF features with bigrams
 
 ## 🚀 Quick Start
 ```bash
 # Install dependencies
 pip install -r requirements.txt
 
-# Run server
-python app.py
+# Run app
+streamlit run app.py
 ```
 
-Server runs on `http://localhost:5000`
+Opens at `http://localhost:8501`
 
-## 📡 API Endpoints
-
-### `GET /`
-API information
-
-### `GET /health`
-Health check
-
-### `POST /predict`
-Analyze sentiment
-
-**Request:**
-```json
-{
-  "text": "Your text here"
-}
+## 📦 Tech Stack
+```
+streamlit==1.31.0
+scikit-learn==1.4.2
+nltk==3.8.1
 ```
 
-**Response:**
-```json
-{
-  "success": true,
-  "sentiment": "positive",
-  "confidence": 85.2,
-  "scores": {
-    "positive": 85.2,
-    "negative": 14.8
-  }
-}
+## 🎨 Features
+
+- ✨ Gradient animated UI with glassmorphism effects
+- 📊 Real-time sentiment predictions with confidence scores
+- 💡 One-click example loader
+- 🔍 Preprocessed text viewer
+- 📱 Fully responsive design
+- 🎭 Custom CSS styling
+
+## 🌐 Live Demo
+
+**Deployed on Streamlit Cloud**: https://sentiment-api-7e96wp3akqlayqhcmtd8xv.streamlit.app
+
+## 📊 Model Details
+
+### Preprocessing
+1. HTML tag removal
+2. Lowercasing
+3. Special character removal
+4. Stopword filtering (NLTK)
+5. TF-IDF vectorization (3,500 features, bigrams)
+
+### Architecture
+```python
+LinearSVC(C=1.0, max_iter=2000, dual='auto')
 ```
 
-## 🛠️ Tech Stack
+### Rule-Based Enhancements
+- Idiom detection: "I hate to say..." → neutral handling
+- Strong phrases: "I love this" → confidence boost
+- Negation patterns: "I hate this" → negative boost
 
-- Flask 3.0.0
-- Scikit-learn 1.8.0
-- NLTK 3.8.1
-- Flask-CORS 4.0.0
+## 📁 Files
+```
+backend/
+├── app.py                 # Streamlit interface
+├── models/
+│   ├── sentiment_model.pkl    # Linear SVM (~29KB)
+│   └── vectorizer.pkl         # TF-IDF (~88MB)
+├── requirements.txt       # Dependencies
+└── README.md             # This file
+```
 
-## 📦 Files
+## 🧪 Testing
 
-- `app.py` - Main Flask application
-- `models/` - Trained ML models
-- `requirements.txt` - Dependencies
+Try these inputs:
+- "This is absolutely brilliant! Highly recommend." → Positive
+- "Terrible quality. Complete waste of money." → Negative
+- "I hate to admit it but this exceeded expectations." → Positive (idiom)
 
-## 🔧 Environment Variables
+## 📈 Performance
 
-None required for local development.
+| Metric | Negative | Positive | Avg |
+|--------|----------|----------|-----|
+| Precision | 83% | 81% | 82% |
+| Recall | 81% | 83% | 82% |
+| F1-Score | 0.82 | 0.82 | 0.82 |
 
-For production, ensure models are in `models/` directory.
+## 🔧 Customization
 
-## 📊 Model Info
+Update model info in `app.py`:
+```python
+st.markdown("""
+* **Accuracy:** 81.90%
+* **Training Data:** 150k reviews
+""")
+```
 
-- **Algorithm**: Logistic Regression
-- **Features**: TF-IDF (5,000 features)
-- **Accuracy**: 82.64%
-- **Training Data**: 150k reviews
+## 👨‍💻 Author
 
-## 🚀 Deployment
+Built with ❤️ using Python & Streamlit
 
-Deployed on Render with:
-- Build: `pip install -r requirements.txt`
-- Start: `gunicorn app:app`
+---
+
+⭐ Star the main repository if you find this useful!
