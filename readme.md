@@ -5,7 +5,7 @@ Interactive web interface for real-time sentiment analysis using Linear SVM and 
 ## 🎯 Model Performance
 
 - **Algorithm**: Linear SVM (Support Vector Machine)
-- **Accuracy**: 81.90%
+- **Accuracy**: 82.17%
 - **Precision**: 82% avg
 - **Recall**: 82% avg
 - **F1-Score**: 0.82
@@ -87,6 +87,13 @@ Try these inputs:
 | Precision | 83% | 81% | 82% |
 | Recall | 81% | 83% | 82% |
 | F1-Score | 0.82 | 0.82 | 0.82 |
+
+## 📝 Model Limitations
+
+- **Not for hate speech detection**: This model analyzes sentiment (opinion quality), not content toxicity or harm. It will not detect or filter hate speech, slurs, or harmful content. For content moderation, use specialized toxicity detection models.
+- **Binary classification**: Only positive/negative (no neutral option)
+- **English only**: Not trained on multilingual data
+- **Domain-specific**: Best on reviews/opinions
 
 ## 🔧 Customization
 
